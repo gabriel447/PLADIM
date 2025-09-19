@@ -13,7 +13,7 @@
         .table-header { @apply bg-slate-100 text-slate-600 font-semibold text-sm; }
         .table-cell { @apply p-3 border-b border-slate-200 text-sm text-slate-700; }
         .checkbox-cell { @apply text-center; }
-        .task-checkbox { @apply h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer; }
+        .task-checkbox { @apply h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer block; }
         .qty-btn { @apply h-7 w-7 rounded-full bg-slate-200 text-slate-600 font-bold flex items-center justify-center hover:bg-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-400 disabled:opacity-50 disabled:cursor-not-allowed; }
         
         @keyframes fadeIn {
@@ -71,7 +71,7 @@
                          Recompensas
                     </h2>
                     <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-right">Pontos</th><th class="table-cell text-center">Qtd</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
+                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-center">Qtd</th><th class="table-cell text-right">Pontos</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -155,7 +155,7 @@
                 for(let dayIndex = 0; dayIndex < 7; dayIndex++){
                     const checkId = `task-${taskIndex}-${dayIndex}`;
                     const isChecked = appState.checkedTasks.includes(checkId);
-                    cells += `<td class="table-cell checkbox-cell"><input type="checkbox" id="${checkId}" class="task-checkbox" data-points="${task.points}" ${isChecked ? 'checked' : ''}></td>`;
+                    cells += `<td class="table-cell checkbox-cell"><input type="checkbox" id="${checkId}" class="task-checkbox mx-auto" data-points="${task.points}" ${isChecked ? 'checked' : ''}></td>`;
                 }
                 cells += `<td class="table-cell text-right font-medium text-teal-600">${task.points}</td>`;
                 row.innerHTML = cells;
@@ -171,26 +171,24 @@
                 const qty = appState.rewardQtys[reward.name] || 0;
                 row.innerHTML = `
                     <td class="table-cell">${reward.name}</td>
-                    <td class="table-cell text-right">${reward.points}</td>
                     <td class="table-cell">
                         <div class="flex items-center justify-center space-x-3">
                             <button class="qty-btn minus-btn" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
                             <span class="qty-display font-semibold text-slate-700 w-8 text-center" data-name="${reward.name}" data-points="${reward.points}">${qty}</span>
                             <button class="qty-btn plus-btn" data-name="${reward.name}">+</button>
                         </div>
-                    </td>`;
+                    </td>
+                    <td class="table-cell text-right">${reward.points}</td>`;
                 rewardsBody.appendChild(row);
             });
         }
 
         function updateScore() {
-            // Update checked tasks state
             appState.checkedTasks = [];
             document.querySelectorAll('.task-checkbox:checked').forEach(checkbox => {
                 appState.checkedTasks.push(checkbox.id);
             });
 
-            // Recalculate points
             let weeklyPoints = 0;
             appState.checkedTasks.forEach(checkId => {
                 const checkbox = document.getElementById(checkId);
@@ -210,6 +208,14 @@
             pontosSemanaEl.textContent = `+ ${weeklyPoints}`;
             pontosAcumuladosEl.textContent = accumulatedPoints;
             saldoAnteriorEl.textContent = appState.saldoAnterior;
+
+            if (accumulatedPoints < 0) {
+                pontosAcumuladosEl.classList.remove('text-teal-600', 'bg-teal-100');
+                pontosAcumuladosEl.classList.add('text-red-600', 'bg-red-100');
+            } else {
+                pontosAcumuladosEl.classList.remove('text-red-600', 'bg-red-100');
+                pontosAcumuladosEl.classList.add('text-teal-600', 'bg-teal-100');
+            }
             
             saveState();
         }
@@ -252,7 +258,6 @@
                 
                 appState.rewardQtys[name] = currentQty;
                 
-                // Re-render only rewards to update button states and values
                 renderRewards();
                 updateScore();
             }
