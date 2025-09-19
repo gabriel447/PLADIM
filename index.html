@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejador de Tarefas Semanal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .table-header {
+            @apply bg-gray-100 text-gray-600 font-semibold text-sm;
+        }
+        .table-cell {
+            @apply p-3 border-b border-gray-200 text-sm text-gray-700;
+        }
+        .checkbox-cell {
+            @apply text-center;
+        }
+        .task-checkbox {
+            @apply h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer;
+        }
+        .reward-input {
+            @apply w-16 text-center border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+        
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Planejador de Tarefas</h1>
+        <p class="text-gray-500 mb-8">Marque as tarefas concluídas para acumular pontos e troque por recompensas.</p>
+
+        <!-- Seção Principal -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Coluna de Tarefas (Ocupa 2 partes) -->
+            <div class="lg:col-span-2">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Tarefas da Semana</h2>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="table-header">
+                            <tr>
+                                <th class="table-cell text-left">Nome</th>
+                                <th class="table-cell">Seg</th>
+                                <th class="table-cell">Ter</th>
+                                <th class="table-cell">Qua</th>
+                                <th class="table-cell">Qui</th>
+                                <th class="table-cell">Sex</th>
+                                <th class="table-cell">Sáb</th>
+                                <th class="table-cell">Dom</th>
+                                <th class="table-cell text-right">Pontos</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Linhas de tarefas serão inseridas pelo JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Coluna de Recompensas e Pontos (Ocupa 1 parte) -->
+            <div class="space-y-8">
+                <!-- Card de Pontos -->
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Pontuação</h2>
+                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">Saldo Anterior</span>
+                            <span id="saldo-anterior" class="text-lg font-semibold text-gray-800">0</span>
+                        </div>
+                         <div class="flex justify-between items-center text-indigo-600">
+                            <span class="font-semibold">Pontos da Semana</span>
+                            <span id="pontos-semana" class="text-lg font-bold">+ 0</span>
+                        </div>
+                        <hr>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg font-bold text-gray-800">Pontos Acumulados</span>
+                            <span id="pontos-acumulados" class="text-2xl font-bold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-md">0</span>
+                        </div>
+                        <button id="reset-button" class="w-full mt-4 bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
+                            Fechar Semana e Salvar Pontos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card de Recompensas -->
+                <div>
+                     <h2 class="text-xl font-semibold text-gray-700 mb-4">Recompensas</h2>
+                    <div class="rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="table-cell text-left">Nome</th>
+                                    <th class="table-cell text-right">Pontos</th>
+                                    <th class="table-cell text-center">Qtd</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rewards-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Linhas de recompensas serão inseridas pelo JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tasks = [
+            { name: 'Meditar', points: 50 },
+            { name: 'Ler livro', points: 50 },
+            { name: 'Codewars', points: 50 },
+            { name: 'Ned', points: 50 },
+            { name: 'Inglês', points: 200 },
+            { name: 'Kickboxing', points: 50 },
+            { name: 'Musica', points: 200 },
+            { name: 'AWS', points: 200 },
+        ];
+
+        const rewards = [
+            { name: 'Hotdog', points: 800 },
+            { name: 'Pizza', points: 800 },
+            { name: 'Hambúrguer', points: 800 },
+            { name: 'Lolzinho', points: 200 },
+            { name: 'Cerveja', points: 200 },
+            { name: 'Baseado', points: 200 },
+            { name: 'Filme', points: 200 },
+        ];
+
+        const tasksBody = document.getElementById('tasks-table-body');
+        const rewardsBody = document.getElementById('rewards-table-body');
+        const saldoAnteriorEl = document.getElementById('saldo-anterior');
+        const pontosSemanaEl = document.getElementById('pontos-semana');
+        const pontosAcumuladosEl = document.getElementById('pontos-acumulados');
+        const resetButton = document.getElementById('reset-button');
+
+        let saldoAnterior = 0;
+
+        function renderTasks() {
+            tasksBody.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell font-medium">${task.name}</td>
+                    ${Array(7).fill(0).map((_, dayIndex) => `
+                        <td class="table-cell checkbox-cell">
+                            <input type="checkbox" class="task-checkbox" data-points="${task.points}" onchange="updateScore()">
+                        </td>
+                    `).join('')}
+                    <td class="table-cell text-right font-medium text-indigo-600">${task.points}</td>
+                `;
+                tasksBody.appendChild(row);
+            });
+        }
+
+        function renderRewards() {
+            rewardsBody.innerHTML = '';
+            rewards.forEach((reward, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="table-cell">${reward.name}</td>
+                    <td class="table-cell text-right">${reward.points}</td>
+                    <td class="table-cell checkbox-cell">
+                        <input type="number" min="0" value="0" class="reward-input" data-points="${reward.points}" onchange="updateScore()" onkeyup="updateScore()">
+                    </td>
+                `;
+                rewardsBody.appendChild(row);
+            });
+        }
+
+        function updateScore() {
+            let weeklyPoints = 0;
+            document.querySelectorAll('.task-checkbox:checked').forEach(checkbox => {
+                weeklyPoints += parseInt(checkbox.dataset.points);
+            });
+
+            let rewardsCost = 0;
+            document.querySelectorAll('.reward-input').forEach(input => {
+                if (input.value > 0) {
+                    rewardsCost += parseInt(input.dataset.points) * parseInt(input.value);
+                }
+            });
+
+            const accumulatedPoints = saldoAnterior + weeklyPoints - rewardsCost;
+
+            pontosSemanaEl.textContent = `+ ${weeklyPoints}`;
+            pontosAcumuladosEl.textContent = accumulatedPoints;
+        }
+        
+        resetButton.addEventListener('click', () => {
+            // Primeiro, calcula o placar final da semana
+            updateScore();
+            
+            // Pega o valor acumulado e o define como o novo "Saldo Anterior"
+            const finalScore = parseInt(pontosAcumuladosEl.textContent);
+            saldoAnterior = finalScore > 0 ? finalScore : 0;
+            saldoAnteriorEl.textContent = saldoAnterior;
+
+            // Limpa os checkboxes de tarefas
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Limpa as quantidades de recompensas
+            document.querySelectorAll('.reward-input').forEach(input => {
+                input.value = 0;
+            });
+
+            // Atualiza o placar para refletir o reset
+            updateScore();
+        });
+
+
+        // Inicialização
+        renderTasks();
+        renderRewards();
+        updateScore();
+    </script>
+</body>
+</html>
