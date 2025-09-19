@@ -13,7 +13,20 @@
         .table-header { @apply bg-slate-100 text-slate-600 font-semibold text-sm; }
         .table-cell { @apply p-3 border-b border-slate-200 text-sm text-slate-700 align-middle; }
         .checkbox-cell { @apply text-center; }
-        .task-checkbox { @apply h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer block; }
+        
+        /* Estilo melhorado para os checkboxes */
+        .task-checkbox {
+            @apply appearance-none h-6 w-6 rounded-md border-2 border-slate-300 bg-white;
+            @apply cursor-pointer transition-all duration-200 ease-in-out;
+            @apply focus:ring-2 focus:ring-offset-2 focus:ring-teal-500;
+        }
+        .task-checkbox:checked {
+            @apply bg-teal-600 border-teal-600;
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
@@ -70,7 +83,7 @@
                          Recompensas
                     </h2>
                     <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-right">Pontos</th><th class="table-cell text-center">Quantidade</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
+                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-center">Quantidade</th><th class="table-cell text-right">Pontos</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -170,14 +183,14 @@
                 const qty = appState.rewardQtys[reward.name] || 0;
                 row.innerHTML = `
                     <td class="table-cell">${reward.name}</td>
-                    <td class="table-cell text-right">${reward.points}</td>
                     <td class="table-cell">
                         <div class="flex items-center justify-center space-x-3">
                             <button class="minus-btn h-8 w-8 rounded-md bg-red-500 text-white font-bold flex items-center justify-center hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:bg-slate-300" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
                             <span class="qty-display font-semibold text-slate-800 text-lg w-10 text-center">${qty}</span>
                             <button class="plus-btn h-8 w-8 rounded-md bg-teal-600 text-white font-bold flex items-center justify-center hover:bg-teal-700 transition-transform duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-teal-500" data-name="${reward.name}">+</button>
                         </div>
-                    </td>`;
+                    </td>
+                    <td class="table-cell text-right font-medium text-teal-600">${reward.points}</td>`;
                 rewardsBody.appendChild(row);
             });
         }
