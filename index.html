@@ -70,7 +70,7 @@
                          Recompensas
                     </h2>
                     <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-right">Pontos</th><th class="table-cell text-center">Qtd</th><th class="table-cell text-center">Ações</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
+                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-right">Pontos</th><th class="table-cell text-center">Quantidade</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -82,7 +82,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-teal-600"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
                         Pontuação
                     </h2>
-                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 space-y-4">
+                    <div class="bg-slate-50 p-8 rounded-lg border border-slate-200 space-y-5">
                         <div class="flex justify-between items-center"><span class="text-slate-600">Saldo Anterior</span><span id="saldo-anterior" class="text-lg font-semibold text-slate-800">0</span></div>
                         <div class="flex justify-between items-center text-teal-600"><span class="font-semibold">Pontos da Semana</span><span id="pontos-semana" class="text-lg font-bold">+ 0</span></div>
                         <hr>
@@ -171,13 +171,11 @@
                 row.innerHTML = `
                     <td class="table-cell">${reward.name}</td>
                     <td class="table-cell text-right">${reward.points}</td>
-                    <td class="table-cell text-center">
-                        <span class="qty-display font-semibold text-slate-700 w-8 text-center">${qty}</span>
-                    </td>
                     <td class="table-cell">
-                        <div class="flex items-center justify-center space-x-2">
-                            <button class="minus-btn h-7 w-7 rounded-md bg-red-500 text-white font-bold flex items-center justify-center hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
-                            <button class="plus-btn h-7 w-7 rounded-md bg-green-500 text-white font-bold flex items-center justify-center hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400" data-name="${reward.name}">+</button>
+                        <div class="flex items-center justify-center space-x-3">
+                            <button class="minus-btn h-8 w-8 rounded-md bg-red-500 text-white font-bold flex items-center justify-center hover:bg-red-600 transition-transform duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50 disabled:bg-slate-300" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
+                            <span class="qty-display font-semibold text-slate-800 text-lg w-10 text-center">${qty}</span>
+                            <button class="plus-btn h-8 w-8 rounded-md bg-teal-600 text-white font-bold flex items-center justify-center hover:bg-teal-700 transition-transform duration-200 ease-in-out transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-teal-500" data-name="${reward.name}">+</button>
                         </div>
                     </td>`;
                 rewardsBody.appendChild(row);
