@@ -11,10 +11,9 @@
             font-family: 'Inter', sans-serif;
         }
         .table-header { @apply bg-slate-100 text-slate-600 font-semibold text-sm; }
-        .table-cell { @apply p-3 border-b border-slate-200 text-sm text-slate-700; }
+        .table-cell { @apply p-3 border-b border-slate-200 text-sm text-slate-700 align-middle; }
         .checkbox-cell { @apply text-center; }
         .task-checkbox { @apply h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer block; }
-        .qty-btn { @apply h-7 w-7 rounded-full bg-slate-200 text-slate-600 font-bold flex items-center justify-center hover:bg-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-400 disabled:opacity-50 disabled:cursor-not-allowed; }
         
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
@@ -71,7 +70,7 @@
                          Recompensas
                     </h2>
                     <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
-                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-center">Qtd</th><th class="table-cell text-right">Pontos</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
+                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-right">Pontos</th><th class="table-cell text-center">Qtd</th><th class="table-cell text-center">Ações</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
                     </div>
                 </div>
             </div>
@@ -171,14 +170,16 @@
                 const qty = appState.rewardQtys[reward.name] || 0;
                 row.innerHTML = `
                     <td class="table-cell">${reward.name}</td>
-                    <td class="table-cell">
-                        <div class="flex items-center justify-center space-x-3">
-                            <button class="qty-btn minus-btn" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
-                            <span class="qty-display font-semibold text-slate-700 w-8 text-center" data-name="${reward.name}" data-points="${reward.points}">${qty}</span>
-                            <button class="qty-btn plus-btn" data-name="${reward.name}">+</button>
-                        </div>
+                    <td class="table-cell text-right">${reward.points}</td>
+                    <td class="table-cell text-center">
+                        <span class="qty-display font-semibold text-slate-700 w-8 text-center">${qty}</span>
                     </td>
-                    <td class="table-cell text-right">${reward.points}</td>`;
+                    <td class="table-cell">
+                        <div class="flex items-center justify-center space-x-2">
+                            <button class="minus-btn h-7 w-7 rounded-md bg-red-500 text-white font-bold flex items-center justify-center hover:bg-red-600 transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 disabled:opacity-50" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
+                            <button class="plus-btn h-7 w-7 rounded-md bg-green-500 text-white font-bold flex items-center justify-center hover:bg-green-600 transition-colors focus:outline-none focus:ring-2 focus:ring-green-400" data-name="${reward.name}">+</button>
+                        </div>
+                    </td>`;
                 rewardsBody.appendChild(row);
             });
         }
