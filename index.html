@@ -10,125 +10,113 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        .table-header {
-            @apply bg-gray-100 text-gray-600 font-semibold text-sm;
+        .table-header { @apply bg-slate-100 text-slate-600 font-semibold text-sm; }
+        .table-cell { @apply p-3 border-b border-slate-200 text-sm text-slate-700; }
+        .checkbox-cell { @apply text-center; }
+        .task-checkbox { @apply h-5 w-5 rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer; }
+        .qty-btn { @apply h-7 w-7 rounded-full bg-slate-200 text-slate-600 font-bold flex items-center justify-center hover:bg-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-400 disabled:opacity-50 disabled:cursor-not-allowed; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .table-cell {
-            @apply p-3 border-b border-gray-200 text-sm text-gray-700;
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        
+        .modal-hidden { display: none; }
+        .modal-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4;
+            animation: fadeIn 0.3s ease-out;
         }
-        .checkbox-cell {
-            @apply text-center;
-        }
-        .task-checkbox {
-            @apply h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer;
-        }
-        .reward-input {
-            @apply w-16 text-center border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50;
+        .modal-content {
+            @apply bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md text-center;
+             animation: fadeIn 0.4s ease-out;
         }
     </style>
 </head>
-<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+<body class="bg-slate-50 flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-teal-50 to-cyan-50">
 
-    <div class="w-full max-w-6xl mx-auto bg-white p-6 sm:p-8 rounded-2xl shadow-lg">
+    <div class="w-full max-w-6xl mx-auto bg-white/70 backdrop-blur-xl p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200 fade-in">
         
-        <h1 class="text-3xl font-bold text-gray-800 mb-2">Planejador de Tarefas</h1>
-        <p class="text-gray-500 mb-8">Marque as tarefas concluídas para acumular pontos e troque por recompensas.</p>
+        <div class="text-center">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Planejador de Tarefas</h1>
+            <p class="text-slate-500 mb-8">Transforme sua rotina em um jogo e conquiste suas metas.</p>
+        </div>
 
-        <!-- Seção Principal -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            <!-- Coluna de Tarefas (Ocupa 2 partes) -->
-            <div class="lg:col-span-2">
-                <h2 class="text-xl font-semibold text-gray-700 mb-4">Tarefas da Semana</h2>
-                <div class="overflow-x-auto rounded-lg border border-gray-200">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="table-header">
-                            <tr>
-                                <th class="table-cell text-left">Nome</th>
-                                <th class="table-cell">Seg</th>
-                                <th class="table-cell">Ter</th>
-                                <th class="table-cell">Qua</th>
-                                <th class="table-cell">Qui</th>
-                                <th class="table-cell">Sex</th>
-                                <th class="table-cell">Sáb</th>
-                                <th class="table-cell">Dom</th>
-                                <th class="table-cell text-right">Pontos</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tasks-table-body" class="bg-white divide-y divide-gray-200">
-                            <!-- Linhas de tarefas serão inseridas pelo JavaScript -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Coluna de Recompensas e Pontos (Ocupa 1 parte) -->
-            <div class="space-y-8">
-                <!-- Card de Pontos -->
+            <!-- Coluna Principal (Tarefas e Recompensas) -->
+            <div class="lg:col-span-2 space-y-8">
                 <div>
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Pontuação</h2>
-                    <div class="bg-gray-50 p-6 rounded-lg border border-gray-200 space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span class="text-gray-600">Saldo Anterior</span>
-                            <span id="saldo-anterior" class="text-lg font-semibold text-gray-800">0</span>
-                        </div>
-                         <div class="flex justify-between items-center text-indigo-600">
-                            <span class="font-semibold">Pontos da Semana</span>
-                            <span id="pontos-semana" class="text-lg font-bold">+ 0</span>
-                        </div>
-                        <hr>
-                        <div class="flex justify-between items-center">
-                            <span class="text-lg font-bold text-gray-800">Pontos Acumulados</span>
-                            <span id="pontos-acumulados" class="text-2xl font-bold text-indigo-600 bg-indigo-100 px-3 py-1 rounded-md">0</span>
-                        </div>
-                        <button id="reset-button" class="w-full mt-4 bg-indigo-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200">
-                            Fechar Semana e Salvar Pontos
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Card de Recompensas -->
-                <div>
-                     <h2 class="text-xl font-semibold text-gray-700 mb-4">Recompensas</h2>
-                    <div class="rounded-lg border border-gray-200">
-                        <table class="min-w-full divide-y divide-gray-200">
+                    <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-teal-600"><path d="M14 22h-4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2Z"/><path d="M18 22h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"/><path d="M6 22H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h2"/><path d="M12 18h.01"/></svg>
+                        Tarefas da Semana
+                    </h2>
+                    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                        <table class="min-w-full">
                             <thead class="table-header">
                                 <tr>
                                     <th class="table-cell text-left">Nome</th>
-                                    <th class="table-cell text-right">Pontos</th>
-                                    <th class="table-cell text-center">Qtd</th>
+                                    <th class="table-cell text-center">Seg</th><th class="table-cell text-center">Ter</th><th class="table-cell text-center">Qua</th>
+                                    <th class="table-cell text-center">Qui</th><th class="table-cell text-center">Sex</th><th class="table-cell text-center">Sáb</th>
+                                    <th class="table-cell text-center">Dom</th><th class="table-cell text-right">Pontos</th>
                                 </tr>
                             </thead>
-                            <tbody id="rewards-table-body" class="bg-white divide-y divide-gray-200">
-                                <!-- Linhas de recompensas serão inseridas pelo JavaScript -->
-                            </tbody>
+                            <tbody id="tasks-table-body" class="divide-y divide-slate-200"></tbody>
                         </table>
                     </div>
                 </div>
+                <div>
+                     <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-teal-600"><path d="M6 10H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2"/><path d="M6 14H4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-4a2 2 0 0 0-2-2h-2"/><path d="M17 10V4h-2v6"/><path d="M12 10V4H7v6"/><path d="M17 20v-6h-2v6"/><path d="M12 20v-6H7v6"/></svg>
+                         Recompensas
+                    </h2>
+                    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                        <table class="min-w-full"><thead class="table-header"><tr><th class="table-cell text-left">Nome</th><th class="table-cell text-right">Pontos</th><th class="table-cell text-center">Qtd</th></tr></thead><tbody id="rewards-table-body" class="divide-y divide-slate-200"></tbody></table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna da Pontuação -->
+            <div class="space-y-8">
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-700 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 text-teal-600"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+                        Pontuação
+                    </h2>
+                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 space-y-4">
+                        <div class="flex justify-between items-center"><span class="text-slate-600">Saldo Anterior</span><span id="saldo-anterior" class="text-lg font-semibold text-slate-800">0</span></div>
+                        <div class="flex justify-between items-center text-teal-600"><span class="font-semibold">Pontos da Semana</span><span id="pontos-semana" class="text-lg font-bold">+ 0</span></div>
+                        <hr>
+                        <div class="flex justify-between items-center"><span class="text-lg font-bold text-slate-800">Pontos Acumulados</span><span id="pontos-acumulados" class="text-2xl font-bold text-teal-600 bg-teal-100 px-3 py-1 rounded-md">0</span></div>
+                        <button id="reset-button" class="w-full mt-4 bg-teal-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-200">Fechar Semana e Salvar Pontos</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmação -->
+    <div id="confirmation-modal" class="modal-hidden modal-overlay">
+        <div class="modal-content">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-4 text-teal-500"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">Fechar a semana?</h3>
+            <p class="text-slate-500 mb-6">Esta ação irá salvar seus pontos acumulados como saldo e limpará as tarefas da semana. Deseja continuar?</p>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-reset" class="py-2 px-6 bg-slate-200 text-slate-700 font-semibold rounded-lg hover:bg-slate-300 transition-colors">Cancelar</button>
+                <button id="confirm-reset" class="py-2 px-6 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition-colors">Confirmar</button>
             </div>
         </div>
     </div>
 
     <script>
         const tasks = [
-            { name: 'Meditar', points: 50 },
-            { name: 'Ler livro', points: 50 },
-            { name: 'Codewars', points: 50 },
-            { name: 'Ned', points: 50 },
-            { name: 'Inglês', points: 200 },
-            { name: 'Kickboxing', points: 50 },
-            { name: 'Musica', points: 200 },
-            { name: 'AWS', points: 200 },
+            { name: 'Meditar', points: 100 }, { name: 'Ler livro', points: 100 }, { name: 'Codewars', points: 100 },
+            { name: 'Ned', points: 200 }, { name: 'Inglês', points: 100 }, { name: 'Kickboxing', points: 100 },
+            { name: 'Musica', points: 200 }, { name: 'AWS', points: 200 },
         ];
-
         const rewards = [
-            { name: 'Hotdog', points: 800 },
-            { name: 'Pizza', points: 800 },
-            { name: 'Hambúrguer', points: 800 },
-            { name: 'Lolzinho', points: 200 },
-            { name: 'Cerveja', points: 200 },
-            { name: 'Baseado', points: 200 },
-            { name: 'Filme', points: 200 },
+            { name: 'Hotdog', points: 1500 }, { name: 'Pizza', points: 3000 }, { name: 'Hambúrguer', points: 3000 },
+            { name: 'Lolzinho', points: 400 }, { name: 'Cerveja', points: 400 }, { name: 'Baseado', points: 400 }, { name: 'Filme', points: 400 },
         ];
 
         const tasksBody = document.getElementById('tasks-table-body');
@@ -137,88 +125,145 @@
         const pontosSemanaEl = document.getElementById('pontos-semana');
         const pontosAcumuladosEl = document.getElementById('pontos-acumulados');
         const resetButton = document.getElementById('reset-button');
+        const modal = document.getElementById('confirmation-modal');
+        const cancelBtn = document.getElementById('cancel-reset');
+        const confirmBtn = document.getElementById('confirm-reset');
+        
+        let appState = {
+            saldoAnterior: 0,
+            checkedTasks: [],
+            rewardQtys: {}
+        };
 
-        let saldoAnterior = 0;
+        function saveState() {
+            localStorage.setItem('taskPlannerState', JSON.stringify(appState));
+        }
+
+        function loadState() {
+            const savedState = localStorage.getItem('taskPlannerState');
+            if (savedState) {
+                appState = JSON.parse(savedState);
+            }
+        }
 
         function renderTasks() {
             tasksBody.innerHTML = '';
-            tasks.forEach((task, index) => {
+            tasks.forEach((task, taskIndex) => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="table-cell font-medium">${task.name}</td>
-                    ${Array(7).fill(0).map((_, dayIndex) => `
-                        <td class="table-cell checkbox-cell">
-                            <input type="checkbox" class="task-checkbox" data-points="${task.points}" onchange="updateScore()">
-                        </td>
-                    `).join('')}
-                    <td class="table-cell text-right font-medium text-indigo-600">${task.points}</td>
-                `;
+                row.className = 'hover:bg-slate-50 transition-colors';
+                let cells = `<td class="table-cell font-medium">${task.name}</td>`;
+                for(let dayIndex = 0; dayIndex < 7; dayIndex++){
+                    const checkId = `task-${taskIndex}-${dayIndex}`;
+                    const isChecked = appState.checkedTasks.includes(checkId);
+                    cells += `<td class="table-cell checkbox-cell"><input type="checkbox" id="${checkId}" class="task-checkbox" data-points="${task.points}" ${isChecked ? 'checked' : ''}></td>`;
+                }
+                cells += `<td class="table-cell text-right font-medium text-teal-600">${task.points}</td>`;
+                row.innerHTML = cells;
                 tasksBody.appendChild(row);
             });
         }
 
         function renderRewards() {
             rewardsBody.innerHTML = '';
-            rewards.forEach((reward, index) => {
+            rewards.forEach((reward) => {
                 const row = document.createElement('tr');
+                row.className = 'hover:bg-slate-50 transition-colors';
+                const qty = appState.rewardQtys[reward.name] || 0;
                 row.innerHTML = `
                     <td class="table-cell">${reward.name}</td>
                     <td class="table-cell text-right">${reward.points}</td>
-                    <td class="table-cell checkbox-cell">
-                        <input type="number" min="0" value="0" class="reward-input" data-points="${reward.points}" onchange="updateScore()" onkeyup="updateScore()">
-                    </td>
-                `;
+                    <td class="table-cell">
+                        <div class="flex items-center justify-center space-x-3">
+                            <button class="qty-btn minus-btn" data-name="${reward.name}" ${qty === 0 ? 'disabled' : ''}>-</button>
+                            <span class="qty-display font-semibold text-slate-700 w-8 text-center" data-name="${reward.name}" data-points="${reward.points}">${qty}</span>
+                            <button class="qty-btn plus-btn" data-name="${reward.name}">+</button>
+                        </div>
+                    </td>`;
                 rewardsBody.appendChild(row);
             });
         }
 
         function updateScore() {
-            let weeklyPoints = 0;
+            // Update checked tasks state
+            appState.checkedTasks = [];
             document.querySelectorAll('.task-checkbox:checked').forEach(checkbox => {
-                weeklyPoints += parseInt(checkbox.dataset.points);
+                appState.checkedTasks.push(checkbox.id);
+            });
+
+            // Recalculate points
+            let weeklyPoints = 0;
+            appState.checkedTasks.forEach(checkId => {
+                const checkbox = document.getElementById(checkId);
+                if (checkbox) weeklyPoints += parseInt(checkbox.dataset.points);
             });
 
             let rewardsCost = 0;
-            document.querySelectorAll('.reward-input').forEach(input => {
-                if (input.value > 0) {
-                    rewardsCost += parseInt(input.dataset.points) * parseInt(input.value);
+            for (const name in appState.rewardQtys) {
+                const qty = appState.rewardQtys[name];
+                const reward = rewards.find(r => r.name === name);
+                if (reward) {
+                    rewardsCost += reward.points * qty;
                 }
-            });
+            }
 
-            const accumulatedPoints = saldoAnterior + weeklyPoints - rewardsCost;
-
+            const accumulatedPoints = appState.saldoAnterior + weeklyPoints - rewardsCost;
             pontosSemanaEl.textContent = `+ ${weeklyPoints}`;
             pontosAcumuladosEl.textContent = accumulatedPoints;
+            saldoAnteriorEl.textContent = appState.saldoAnterior;
+            
+            saveState();
         }
         
-        resetButton.addEventListener('click', () => {
-            // Primeiro, calcula o placar final da semana
+        function executeReset() {
             updateScore();
-            
-            // Pega o valor acumulado e o define como o novo "Saldo Anterior"
             const finalScore = parseInt(pontosAcumuladosEl.textContent);
-            saldoAnterior = finalScore > 0 ? finalScore : 0;
-            saldoAnteriorEl.textContent = saldoAnterior;
-
-            // Limpa os checkboxes de tarefas
-            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-
-            // Limpa as quantidades de recompensas
-            document.querySelectorAll('.reward-input').forEach(input => {
-                input.value = 0;
-            });
-
-            // Atualiza o placar para refletir o reset
+            appState.saldoAnterior = finalScore > 0 ? finalScore : 0;
+            appState.checkedTasks = [];
+            appState.rewardQtys = {};
+            
+            renderTasks();
+            renderRewards();
             updateScore();
+            modal.classList.add('modal-hidden');
+        }
+
+        // --- Event Listeners ---
+        resetButton.addEventListener('click', () => modal.classList.remove('modal-hidden'));
+        cancelBtn.addEventListener('click', () => modal.classList.add('modal-hidden'));
+        confirmBtn.addEventListener('click', executeReset);
+
+        tasksBody.addEventListener('change', (event) => {
+            if (event.target.classList.contains('task-checkbox')) {
+                updateScore();
+            }
         });
 
+        rewardsBody.addEventListener('click', (event) => {
+            const target = event.target;
+            if (target.matches('.plus-btn') || target.matches('.minus-btn')) {
+                const name = target.dataset.name;
+                let currentQty = appState.rewardQtys[name] || 0;
 
-        // Inicialização
+                if (target.matches('.plus-btn')) {
+                    currentQty++;
+                } else if (target.matches('.minus-btn')) {
+                    currentQty = Math.max(0, currentQty - 1);
+                }
+                
+                appState.rewardQtys[name] = currentQty;
+                
+                // Re-render only rewards to update button states and values
+                renderRewards();
+                updateScore();
+            }
+        });
+
+        // --- Inicialização ---
+        loadState();
         renderTasks();
         renderRewards();
         updateScore();
     </script>
 </body>
 </html>
+
