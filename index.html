@@ -18,8 +18,6 @@
       --danger-light: #fee2e2;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #ecfdf5, #cffafe);
@@ -39,68 +37,21 @@
       border-radius: 1rem;
       padding: 2rem;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      animation: fadeIn 0.6s ease;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
+    h1 { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+    p.subtitle { text-align: center; color: var(--text-light); margin-bottom: 2rem; }
 
-    p.subtitle {
-      text-align: center;
-      color: var(--text-light);
-      margin-bottom: 2rem;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 2rem;
-    }
-
+    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
     .section { margin-bottom: 2rem; }
+    h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
 
-    h2 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      color: var(--text);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid var(--border);
-      border-radius: .5rem;
-      overflow: hidden;
-      background: var(--card);
-    }
-
-    th, td {
-      padding: .75rem 1rem;
-      border-bottom: 1px solid var(--border);
-      font-size: .9rem;
-      text-align: center;
-    }
-
-    th {
-      background: #f3f4f6;
-      color: var(--text-light);
-      font-weight: 600;
-      font-size: .85rem;
-    }
-
+    table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: .5rem; overflow: hidden; }
+    th, td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); font-size: .9rem; text-align: center; }
+    th { background: #f3f4f6; color: var(--text-light); font-weight: 600; font-size: .85rem; }
     td:first-child { text-align: left; font-weight: 500; }
-
     tr:nth-child(even) { background: #f9fafb; }
 
-    /* Checkbox */
     .task-checkbox {
       appearance: none;
       width: 22px;
@@ -110,7 +61,6 @@
       cursor: pointer;
       transition: all .2s;
     }
-
     .task-checkbox:checked {
       background-color: var(--primary);
       border-color: var(--primary);
@@ -119,56 +69,18 @@
       background-position: center;
     }
 
-    /* Botões */
-    button {
-      border: none;
-      cursor: pointer;
-      border-radius: .5rem;
-      transition: all .2s;
-      font-weight: 600;
-    }
-
-    .btn-primary {
-      background: var(--primary);
-      color: white;
-      padding: .75rem 1.25rem;
-      width: 100%;
-      margin-top: 1rem;
-    }
-
+    button { border: none; cursor: pointer; border-radius: .5rem; transition: all .2s; font-weight: 600; }
+    .btn-primary { background: var(--primary); color: white; padding: .75rem 1.25rem; width: 100%; margin-top: 1rem; }
     .btn-primary:hover { background: var(--primary-hover); }
+    .btn-circle { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 50%; font-size: 1rem; margin: 0 5px; }
+    .btn-plus { background: var(--primary); color: white; } .btn-plus:hover { background: var(--primary-hover); }
+    .btn-minus { background: var(--danger-light); color: var(--danger); } .btn-minus:hover { background: #fecaca; }
 
-    /* Pontuação */
-    .score-card {
-      background: #f9fafb;
-      border: 1px solid var(--border);
-      padding: 1.5rem;
-      border-radius: .75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .score-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .score-main {
-      font-size: 1.5rem;
-      font-weight: 700;
-      padding: .25rem .75rem;
-      border-radius: .5rem;
-    }
-
+    .score-card { background: #f9fafb; border: 1px solid var(--border); padding: 1.5rem; border-radius: .75rem; display: flex; flex-direction: column; gap: 1rem; }
+    .score-row { display: flex; justify-content: space-between; align-items: center; }
+    .score-main { font-size: 1.5rem; font-weight: 700; padding: .25rem .75rem; border-radius: .5rem; }
     .score-positive { color: var(--primary); background: #ccfbf1; }
     .score-negative { color: var(--danger); background: #fee2e2; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
   </style>
 </head>
 <body>
@@ -177,7 +89,6 @@
     <p class="subtitle">Transforme sua rotina em um jogo e conquiste suas metas.</p>
 
     <div class="grid">
-      <!-- Tarefas e Recompensas -->
       <div>
         <div class="section">
           <h2>📋 Tarefas da Semana</h2>
@@ -197,16 +108,13 @@
           <h2>🎁 Recompensas</h2>
           <table>
             <thead>
-              <tr>
-                <th>Nome</th><th>Pontos</th><th>Qtd</th>
-              </tr>
+              <tr><th>Nome</th><th>Pontos</th><th>Qtd</th></tr>
             </thead>
             <tbody id="rewards-table-body"></tbody>
           </table>
         </div>
       </div>
 
-      <!-- Pontuação -->
       <div>
         <h2>⭐ Pontuação</h2>
         <div class="score-card">
@@ -224,63 +132,85 @@
   </div>
 
   <script>
+    let tasks = [];
+    let rewards = [];
+    let saldoAnterior = 0;
     let pontosSemana = 0;
     let pontosAcumulados = 0;
-    let saldoAnterior = 0;
+    let taskChecks = {}; // <- guarda checkboxes
 
-    // Carregar tarefas
-    async function loadTasks() {
-      const res = await fetch("tasks.json");
-      const tasks = await res.json();
+    function saveState() {
+      localStorage.setItem("plannerState", JSON.stringify({
+        saldoAnterior,
+        pontosSemana,
+        pontosAcumulados,
+        rewards,
+        taskChecks
+      }));
+    }
+
+    function loadState() {
+      const saved = localStorage.getItem("plannerState");
+      if (saved) {
+        const state = JSON.parse(saved);
+        saldoAnterior = state.saldoAnterior;
+        pontosSemana = state.pontosSemana;
+        pontosAcumulados = state.pontosAcumulados;
+        rewards = state.rewards || [];
+        taskChecks = state.taskChecks || {};
+      }
+    }
+
+    function renderTasks() {
       const tbody = document.getElementById("tasks-table-body");
       tbody.innerHTML = "";
-
-      tasks.forEach(task => {
+      tasks.forEach((task, taskIndex) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${task.name}</td>
-          ${["seg","ter","qua","qui","sex","sab","dom"].map(day =>
-            `<td><input type="checkbox" class="task-checkbox" data-points="${task.points}"></td>`
-          ).join("")}
-          <td>${task.points}</td>
-        `;
+        let cells = `<td>${task.name}</td>`;
+        for (let day = 0; day < 7; day++) {
+          const checkId = `task-${taskIndex}-${day}`;
+          const checked = taskChecks[checkId] ? "checked" : "";
+          cells += `<td><input type="checkbox" class="task-checkbox" data-id="${checkId}" data-points="${task.points}" ${checked}></td>`;
+        }
+        cells += `<td>${task.points}</td>`;
+        tr.innerHTML = cells;
         tbody.appendChild(tr);
-      });
 
-      document.querySelectorAll(".task-checkbox").forEach(cb => {
-        cb.addEventListener("change", (e) => {
-          const pts = parseInt(e.target.dataset.points);
-          if (e.target.checked) pontosSemana += pts;
-          else pontosSemana -= pts;
-          updateScores();
+        tr.querySelectorAll(".task-checkbox").forEach(cb => {
+          cb.addEventListener("change", () => {
+            taskChecks[cb.dataset.id] = cb.checked;
+            updateScores();
+          });
         });
       });
     }
 
-    // Carregar recompensas
-    async function loadRewards() {
-      const res = await fetch("rewards.json");
-      const rewards = await res.json();
+    function renderRewards() {
       const tbody = document.getElementById("rewards-table-body");
       tbody.innerHTML = "";
-
-      rewards.forEach(reward => {
+      rewards.forEach((reward, index) => {
+        if (reward.quantity === undefined) reward.quantity = 0;
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${reward.name}</td>
           <td>${reward.points}</td>
-          <td><button class="btn-minus">-</button> ${reward.quantity} <button class="btn-plus">+</button></td>
+          <td>
+            <button class="btn-circle btn-minus">−</button>
+            <span class="reward-qty">${reward.quantity}</span>
+            <button class="btn-circle btn-plus">+</button>
+          </td>
         `;
         tbody.appendChild(tr);
 
         const minusBtn = tr.querySelector(".btn-minus");
         const plusBtn = tr.querySelector(".btn-plus");
+        const qtySpan = tr.querySelector(".reward-qty");
 
         minusBtn.addEventListener("click", () => {
           if (reward.quantity > 0) {
             reward.quantity--;
             pontosAcumulados += reward.points;
-            loadRewards();
+            qtySpan.textContent = reward.quantity;
             updateScores();
           }
         });
@@ -288,27 +218,52 @@
         plusBtn.addEventListener("click", () => {
           reward.quantity++;
           pontosAcumulados -= reward.points;
-          loadRewards();
+          qtySpan.textContent = reward.quantity;
           updateScores();
         });
       });
     }
 
     function updateScores() {
+      pontosSemana = 0;
+      document.querySelectorAll(".task-checkbox:checked").forEach(cb => {
+        pontosSemana += parseInt(cb.dataset.points);
+      });
+
       document.getElementById("saldo-anterior").textContent = saldoAnterior;
       document.getElementById("pontos-semana").textContent = `+${pontosSemana}`;
       document.getElementById("pontos-acumulados").textContent = pontosAcumulados + pontosSemana;
+
+      const acumuladoEl = document.getElementById("pontos-acumulados");
+      acumuladoEl.classList.toggle("score-negative", (pontosAcumulados + pontosSemana) < 0);
+      acumuladoEl.classList.toggle("score-positive", (pontosAcumulados + pontosSemana) >= 0);
+
+      saveState();
     }
 
     document.getElementById("reset-button").addEventListener("click", () => {
-      saldoAnterior = pontosAcumulados + pontosSemana;
+      pontosAcumulados += pontosSemana;
+      saldoAnterior = pontosAcumulados;
       pontosSemana = 0;
+      taskChecks = {};
+      document.querySelectorAll(".task-checkbox").forEach(cb => cb.checked = false);
+      rewards.forEach(r => r.quantity = 0);
+      renderRewards();
       updateScores();
-      alert("Semana fechada! Pontos salvos.");
     });
 
-    loadTasks();
-    loadRewards();
+    async function init() {
+      loadState();
+      const t = await fetch("tasks.json").then(r => r.json());
+      const r = await fetch("rewards.json").then(r => r.json());
+      tasks = t;
+      if (rewards.length === 0) rewards = r; // se não tinha salvo
+      renderTasks();
+      renderRewards();
+      updateScores();
+    }
+
+    init();
   </script>
 </body>
 </html>
