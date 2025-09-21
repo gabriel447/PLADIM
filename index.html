@@ -105,6 +105,16 @@
     }
     .add-item-form button:hover { background: var(--primary-hover); }
 
+    /* Remove arrows from number inputs */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+
     table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     th, td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); font-size: .9rem; text-align: center; vertical-align: middle; }
     th { background: #f3f4f6; color: var(--text-light); font-weight: 600; font-size: .85rem; text-transform: uppercase; }
