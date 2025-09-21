@@ -1,0 +1,30 @@
+[
+    {
+        "name": "Hotdog",
+        "points": 1500
+    },
+    {
+        "name": "Pizza",
+        "points": 3000
+    },
+    {
+        "name": "Hambúrguer",
+        "points": 3000
+    },
+    {
+        "name": "Lolzinho",
+        "points": 400
+    },
+    {
+        "name": "Cerveja",
+        "points": 400
+    },
+    {
+        "name": "Baseado",
+        "points": 400
+    },
+    {
+        "name": "Filme",
+        "points": 400
+    }
+]

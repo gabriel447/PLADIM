@@ -18,11 +18,7 @@
       --danger-light: #fee2e2;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', sans-serif;
@@ -65,9 +61,7 @@
       gap: 2rem;
     }
 
-    .section {
-      margin-bottom: 2rem;
-    }
+    .section { margin-bottom: 2rem; }
 
     h2 {
       font-size: 1.25rem;
@@ -102,14 +96,9 @@
       font-size: .85rem;
     }
 
-    td:first-child {
-      text-align: left;
-      font-weight: 500;
-    }
+    td:first-child { text-align: left; font-weight: 500; }
 
-    tr:nth-child(even) {
-      background: #f9fafb;
-    }
+    tr:nth-child(even) { background: #f9fafb; }
 
     /* Checkbox */
     .task-checkbox {
@@ -147,34 +136,7 @@
       margin-top: 1rem;
     }
 
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-circle {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      border-radius: .4rem;
-      font-size: .9rem;
-    }
-
-    .btn-plus {
-      background: var(--primary);
-      color: white;
-    }
-
-    .btn-plus:hover { background: var(--primary-hover); }
-
-    .btn-minus {
-      background: var(--danger-light);
-      color: var(--danger);
-    }
-
-    .btn-minus:hover { background: #fecaca; }
+    .btn-primary:hover { background: var(--primary-hover); }
 
     /* Pontuação */
     .score-card {
@@ -200,17 +162,9 @@
       border-radius: .5rem;
     }
 
-    .score-positive {
-      color: var(--primary);
-      background: #ccfbf1;
-    }
+    .score-positive { color: var(--primary); background: #ccfbf1; }
+    .score-negative { color: var(--danger); background: #fee2e2; }
 
-    .score-negative {
-      color: var(--danger);
-      background: #fee2e2;
-    }
-
-    /* Anim */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -268,5 +222,93 @@
       </div>
     </div>
   </div>
+
+  <script>
+    let pontosSemana = 0;
+    let pontosAcumulados = 0;
+    let saldoAnterior = 0;
+
+    // Carregar tarefas
+    async function loadTasks() {
+      const res = await fetch("tasks.json");
+      const tasks = await res.json();
+      const tbody = document.getElementById("tasks-table-body");
+      tbody.innerHTML = "";
+
+      tasks.forEach(task => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${task.name}</td>
+          ${["seg","ter","qua","qui","sex","sab","dom"].map(day =>
+            `<td><input type="checkbox" class="task-checkbox" data-points="${task.points}"></td>`
+          ).join("")}
+          <td>${task.points}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.querySelectorAll(".task-checkbox").forEach(cb => {
+        cb.addEventListener("change", (e) => {
+          const pts = parseInt(e.target.dataset.points);
+          if (e.target.checked) pontosSemana += pts;
+          else pontosSemana -= pts;
+          updateScores();
+        });
+      });
+    }
+
+    // Carregar recompensas
+    async function loadRewards() {
+      const res = await fetch("rewards.json");
+      const rewards = await res.json();
+      const tbody = document.getElementById("rewards-table-body");
+      tbody.innerHTML = "";
+
+      rewards.forEach(reward => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${reward.name}</td>
+          <td>${reward.points}</td>
+          <td><button class="btn-minus">-</button> ${reward.quantity} <button class="btn-plus">+</button></td>
+        `;
+        tbody.appendChild(tr);
+
+        const minusBtn = tr.querySelector(".btn-minus");
+        const plusBtn = tr.querySelector(".btn-plus");
+
+        minusBtn.addEventListener("click", () => {
+          if (reward.quantity > 0) {
+            reward.quantity--;
+            pontosAcumulados += reward.points;
+            loadRewards();
+            updateScores();
+          }
+        });
+
+        plusBtn.addEventListener("click", () => {
+          reward.quantity++;
+          pontosAcumulados -= reward.points;
+          loadRewards();
+          updateScores();
+        });
+      });
+    }
+
+    function updateScores() {
+      document.getElementById("saldo-anterior").textContent = saldoAnterior;
+      document.getElementById("pontos-semana").textContent = `+${pontosSemana}`;
+      document.getElementById("pontos-acumulados").textContent = pontosAcumulados + pontosSemana;
+    }
+
+    document.getElementById("reset-button").addEventListener("click", () => {
+      saldoAnterior = pontosAcumulados + pontosSemana;
+      pontosSemana = 0;
+      updateScores();
+      alert("Semana fechada! Pontos salvos.");
+    });
+
+    loadTasks();
+    loadRewards();
+  </script>
 </body>
 </html>
