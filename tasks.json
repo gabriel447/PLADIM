@@ -3,8 +3,8 @@
   { "name": "Ler livro", "points": 100 },
   { "name": "Codewars", "points": 100 },
   { "name": "Ned", "points": 200 },
-  { "name": "Inglês", "points": 100 },
+  { "name": "InglÃªs", "points": 100 },
   { "name": "Kickboxing", "points": 100 },
-  { "name": "Música", "points": 200 },
+  { "name": "MÃºsica", "points": 200 },
   { "name": "AWS", "points": 200 }
 ]
