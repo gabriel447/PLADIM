@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planejador de Tarefas</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f9fafb;
@@ -18,6 +18,10 @@
       --danger-light: #fee2e2;
     }
 
+    *, *::before, *::after {
+        box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #ecfdf5, #cffafe);
@@ -25,31 +29,86 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 1rem;
       color: var(--text);
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1100px;
       width: 100%;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 1rem;
       padding: 2rem;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
     }
 
     h1 { text-align: center; font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
     p.subtitle { text-align: center; color: var(--text-light); margin-bottom: 2rem; }
 
-    .grid { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
-    .section { margin-bottom: 2rem; }
-    h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+    .main-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 2rem;
+      align-items: flex-start;
+    }
 
-    table { width: 100%; border-collapse: collapse; border: 1px solid var(--border); border-radius: .5rem; overflow: hidden; }
+    @media (max-width: 900px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .score-section h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    /* Estilo das Abas Aprimorado */
+    .tab-container {
+        border: 1px solid var(--border);
+        border-radius: .75rem;
+        overflow: hidden;
+        background-color: var(--card);
+    }
+
+    .tab-headers {
+        display: flex;
+        background-color: #f9fafb;
+    }
+
+    .tab-header {
+        flex-grow: 1;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 600;
+        color: var(--text-light);
+        border-bottom: 1px solid var(--border);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .tab-header.active {
+        color: var(--primary);
+        background-color: var(--card);
+        border-bottom-color: transparent;
+    }
+    
+    .tab-content {
+        display: none;
+        padding: 1rem;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    
+    table { width: 100%; border-collapse: collapse; overflow: hidden; }
     th, td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); font-size: .9rem; text-align: center; }
-    th { background: #f3f4f6; color: var(--text-light); font-weight: 600; font-size: .85rem; }
+    th { background: #f3f4f6; color: var(--text-light); font-weight: 600; font-size: .85rem; text-transform: uppercase; }
     td:first-child { text-align: left; font-weight: 500; }
+    tr:last-child td { border-bottom: none; }
     tr:nth-child(even) { background: #f9fafb; }
 
     .task-checkbox {
@@ -60,6 +119,7 @@
       border-radius: .4rem;
       cursor: pointer;
       transition: all .2s;
+      vertical-align: middle;
     }
     .task-checkbox:checked {
       background-color: var(--primary);
@@ -76,7 +136,7 @@
     .btn-plus { background: var(--primary); color: white; } .btn-plus:hover { background: var(--primary-hover); }
     .btn-minus { background: var(--danger-light); color: var(--danger); } .btn-minus:hover { background: #fecaca; }
 
-    .score-card { background: #f9fafb; border: 1px solid var(--border); padding: 1.5rem; border-radius: .75rem; display: flex; flex-direction: column; gap: 1rem; }
+    .score-card { background: #f3f4f6; border: 1px solid var(--border); padding: 1.5rem; border-radius: .75rem; display: flex; flex-direction: column; gap: 1rem; }
     .score-row { display: flex; justify-content: space-between; align-items: center; }
     .score-main { font-size: 1.5rem; font-weight: 700; padding: .25rem .75rem; border-radius: .5rem; }
     .score-positive { color: var(--primary); background: #ccfbf1; }
@@ -88,10 +148,15 @@
     <h1>Planejador de Tarefas</h1>
     <p class="subtitle">Transforme sua rotina em um jogo e conquiste suas metas.</p>
 
-    <div class="grid">
-      <div>
-        <div class="section">
-          <h2>📋 Tarefas da Semana</h2>
+    <div class="main-layout">
+      <!-- Abas para Tarefas e Recompensas -->
+      <div class="tab-container">
+        <div class="tab-headers">
+          <div class="tab-header active" data-tab="tasks">📋 Tarefas</div>
+          <div class="tab-header" data-tab="rewards">🎁 Recompensas</div>
+        </div>
+        
+        <div id="tasks" class="tab-content active">
           <table>
             <thead>
               <tr>
@@ -103,24 +168,22 @@
             <tbody id="tasks-table-body"></tbody>
           </table>
         </div>
-
-        <div class="section">
-          <h2>🎁 Recompensas</h2>
+        
+        <div id="rewards" class="tab-content">
           <table>
-            <thead>
-              <tr><th>Nome</th><th>Pontos</th><th>Qtd</th></tr>
-            </thead>
+            <thead><tr><th>Nome</th><th>Pontos</th><th>Qtd</th></tr></thead>
             <tbody id="rewards-table-body"></tbody>
           </table>
         </div>
       </div>
 
-      <div>
+      <!-- Seção de Pontuação -->
+      <div class="score-section">
         <h2>⭐ Pontuação</h2>
         <div class="score-card">
           <div class="score-row"><span>Saldo Anterior</span><span id="saldo-anterior">0</span></div>
           <div class="score-row"><strong>Pontos da Semana</strong><span id="pontos-semana">+0</span></div>
-          <hr>
+          <hr style="border-color: var(--border); border-style: dashed;">
           <div class="score-row">
             <strong>Pontos Acumulados</strong>
             <span id="pontos-acumulados" class="score-main score-positive">0</span>
@@ -132,40 +195,56 @@
   </div>
 
   <script>
+    // --- Estado da Aplicação ---
     let tasks = [];
     let rewards = [];
     let saldoAnterior = 0;
     let pontosSemana = 0;
-    let pontosAcumulados = 0;
-    let taskChecks = {}; // <- guarda checkboxes
+    let taskChecks = {};
+
+    // --- Dados Iniciais ---
+    const initialTasks = [
+        { "name": "Meditar", "points": 100 },
+        { "name": "Ler livro", "points": 100 },
+        { "name": "Codewars", "points": 100 },
+        { "name": "Ned", "points": 200 },
+        { "name": "Inglês", "points": 100 },
+        { "name": "Kickboxing", "points": 100 },
+        { "name": "Música", "points": 200 },
+        { "name": "AWS", "points": 200 }
+    ];
+
+    const initialRewards = [
+        { "name": "Hotdog", "points": 1500 },
+        { "name": "Pizza", "points": 3000 },
+        { "name": "Hambúrguer", "points": 3000 },
+        { "name": "Lolzinho", "points": 400 },
+        { "name": "Cerveja", "points": 400 },
+        { "name": "Baseado", "points": 400 },
+        { "name": "Filme", "points": 400 }
+    ];
 
     function saveState() {
-      localStorage.setItem("plannerState", JSON.stringify({
-        saldoAnterior,
-        pontosSemana,
-        pontosAcumulados,
-        rewards,
-        taskChecks
-      }));
+      localStorage.setItem("plannerState", JSON.stringify({ saldoAnterior, rewards, taskChecks }));
     }
 
     function loadState() {
       const saved = localStorage.getItem("plannerState");
       if (saved) {
         const state = JSON.parse(saved);
-        saldoAnterior = state.saldoAnterior;
-        pontosSemana = state.pontosSemana;
-        pontosAcumulados = state.pontosAcumulados;
+        saldoAnterior = state.saldoAnterior || 0;
         rewards = state.rewards || [];
         taskChecks = state.taskChecks || {};
       }
     }
 
+    // --- Funções de Renderização ---
     function renderTasks() {
       const tbody = document.getElementById("tasks-table-body");
       tbody.innerHTML = "";
       tasks.forEach((task, taskIndex) => {
         const tr = document.createElement("tr");
+        tr.dataset.index = taskIndex;
         let cells = `<td>${task.name}</td>`;
         for (let day = 0; day < 7; day++) {
           const checkId = `task-${taskIndex}-${day}`;
@@ -175,89 +254,154 @@
         cells += `<td>${task.points}</td>`;
         tr.innerHTML = cells;
         tbody.appendChild(tr);
-
-        tr.querySelectorAll(".task-checkbox").forEach(cb => {
-          cb.addEventListener("change", () => {
-            taskChecks[cb.dataset.id] = cb.checked;
-            updateScores();
-          });
-        });
       });
     }
 
     function renderRewards() {
       const tbody = document.getElementById("rewards-table-body");
       tbody.innerHTML = "";
-      rewards.forEach((reward, index) => {
+      rewards.forEach((reward, rewardIndex) => {
         if (reward.quantity === undefined) reward.quantity = 0;
         const tr = document.createElement("tr");
+        tr.dataset.index = rewardIndex;
         tr.innerHTML = `
           <td>${reward.name}</td>
           <td>${reward.points}</td>
           <td>
-            <button class="btn-circle btn-minus">−</button>
-            <span class="reward-qty">${reward.quantity}</span>
-            <button class="btn-circle btn-plus">+</button>
+            <button class="btn-circle btn-minus" aria-label="Remover ${reward.name}">−</button>
+            <span class="reward-qty" style="display: inline-block; width: 25px; text-align: center;">${reward.quantity}</span>
+            <button class="btn-circle btn-plus" aria-label="Adicionar ${reward.name}">+</button>
           </td>
         `;
         tbody.appendChild(tr);
-
-        const minusBtn = tr.querySelector(".btn-minus");
-        const plusBtn = tr.querySelector(".btn-plus");
-        const qtySpan = tr.querySelector(".reward-qty");
-
-        minusBtn.addEventListener("click", () => {
-          if (reward.quantity > 0) {
-            reward.quantity--;
-            pontosAcumulados += reward.points;
-            qtySpan.textContent = reward.quantity;
-            updateScores();
-          }
-        });
-
-        plusBtn.addEventListener("click", () => {
-          reward.quantity++;
-          pontosAcumulados -= reward.points;
-          qtySpan.textContent = reward.quantity;
-          updateScores();
-        });
       });
+    }
+    
+    // --- Funções de Lógica e Cálculo ---
+    function calculateAccumulatedPoints() {
+        let pontosGastosRecompensas = 0;
+        rewards.forEach(reward => {
+            pontosGastosRecompensas += (reward.quantity || 0) * reward.points;
+        });
+        
+        let pontosGanhosSemana = 0;
+        Object.keys(taskChecks).forEach(checkId => {
+            if(taskChecks[checkId]) {
+                const [_, taskIndex, day] = checkId.split('-');
+                if(tasks[parseInt(taskIndex)]) {
+                    pontosGanhosSemana += tasks[parseInt(taskIndex)].points;
+                }
+            }
+        });
+
+        return saldoAnterior + pontosGanhosSemana - pontosGastosRecompensas;
     }
 
     function updateScores() {
       pontosSemana = 0;
-      document.querySelectorAll(".task-checkbox:checked").forEach(cb => {
-        pontosSemana += parseInt(cb.dataset.points);
+      Object.keys(taskChecks).forEach(checkId => {
+          if(taskChecks[checkId]) {
+              const [_, taskIndex, day] = checkId.split('-');
+              if(tasks[parseInt(taskIndex)]) {
+                 pontosSemana += tasks[parseInt(taskIndex)].points;
+              }
+          }
       });
+      
+      const pontosAcumulados = calculateAccumulatedPoints();
 
       document.getElementById("saldo-anterior").textContent = saldoAnterior;
       document.getElementById("pontos-semana").textContent = `+${pontosSemana}`;
-      document.getElementById("pontos-acumulados").textContent = pontosAcumulados + pontosSemana;
-
+      document.getElementById("pontos-acumulados").textContent = pontosAcumulados;
+      
       const acumuladoEl = document.getElementById("pontos-acumulados");
-      acumuladoEl.classList.toggle("score-negative", (pontosAcumulados + pontosSemana) < 0);
-      acumuladoEl.classList.toggle("score-positive", (pontosAcumulados + pontosSemana) >= 0);
+      acumuladoEl.classList.toggle("score-negative", pontosAcumulados < 0);
+      acumuladoEl.classList.toggle("score-positive", pontosAcumulados >= 0);
 
       saveState();
     }
+    
+    // --- Event Listeners ---
+    document.getElementById("tasks-table-body").addEventListener('change', (e) => {
+        if(e.target.classList.contains('task-checkbox')) {
+            taskChecks[e.target.dataset.id] = e.target.checked;
+            updateScores();
+        }
+    });
+
+    document.getElementById("rewards-table-body").addEventListener('click', (e) => {
+        const target = e.target;
+        if(target.classList.contains('btn-plus') || target.classList.contains('btn-minus')) {
+            const tr = target.closest('tr');
+            const rewardIndex = parseInt(tr.dataset.index);
+            const reward = rewards[rewardIndex];
+            const isPlus = target.classList.contains('btn-plus');
+
+            if(isPlus) {
+                const currentTotal = calculateAccumulatedPoints();
+                if (currentTotal >= reward.points) {
+                    reward.quantity = (reward.quantity || 0) + 1;
+                } else {
+                    console.warn("Pontos insuficientes!");
+                    const scoreEl = document.getElementById('pontos-acumulados');
+                    scoreEl.style.transform = 'scale(1.1)';
+                    scoreEl.style.transition = 'transform 0.1s ease';
+                    setTimeout(() => { scoreEl.style.transform = 'scale(1)'; }, 100);
+                    return;
+                }
+            } else { // isMinus
+                if (reward.quantity > 0) {
+                    reward.quantity--;
+                }
+            }
+            tr.querySelector('.reward-qty').textContent = reward.quantity;
+            updateScores();
+        }
+    });
 
     document.getElementById("reset-button").addEventListener("click", () => {
-      pontosAcumulados += pontosSemana;
-      saldoAnterior = pontosAcumulados;
+      // Calcula o total acumulado e define como o novo saldo inicial
+      saldoAnterior = calculateAccumulatedPoints();
+      
+      // Reseta o progresso da semana
       pontosSemana = 0;
       taskChecks = {};
-      document.querySelectorAll(".task-checkbox").forEach(cb => cb.checked = false);
       rewards.forEach(r => r.quantity = 0);
+
+      // Renderiza novamente para refletir o estado zerado
+      renderTasks();
       renderRewards();
+      
+      // Atualiza a exibição da pontuação
       updateScores();
     });
 
-    async function init() {
+    document.querySelectorAll('.tab-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const targetTab = header.dataset.tab;
+            document.querySelectorAll('.tab-header').forEach(h => h.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            header.classList.add('active');
+            document.getElementById(targetTab).classList.add('active');
+        });
+    });
+    
+    // --- Inicialização ---
+    function init() {
       loadState();
-      const t = await fetch("tasks.json").then(r => r.json());
-      const r = await fetch("rewards.json").then(r => r.json());
-      tasks = t;
-      if (rewards.length === 0) rewards = r; // se não tinha salvo
+      
+      tasks = initialTasks;
+      const rewardsData = initialRewards;
+
+      const mergedRewards = rewardsData.map(rewardFromJson => {
+          const savedReward = rewards.find(r => r.name === rewardFromJson.name);
+          return {
+              ...rewardFromJson,
+              quantity: savedReward ? savedReward.quantity : 0,
+          };
+      });
+      rewards = mergedRewards;
+
       renderTasks();
       renderRewards();
       updateScores();
@@ -267,3 +411,4 @@
   </script>
 </body>
 </html>
+
