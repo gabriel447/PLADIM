@@ -119,8 +119,9 @@
     table { width: 100%; border-collapse: collapse; table-layout: fixed; }
     th, td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); font-size: .9rem; text-align: center; vertical-align: middle; }
     th { background: #f3f4f6; color: var(--text-light); font-weight: 600; font-size: .85rem; text-transform: uppercase; }
-    td:first-child { text-align: left; font-weight: 500; word-break: break-word; }
+    td:first-child:not(.empty-row) { text-align: left; font-weight: 500; word-break: break-word; }
     tr:last-child td { border-bottom: none; }
+    .empty-row { padding: 18px 12px; text-align: center; color: #64748b; font-style: italic; }
     
     /* Estilos específicos da Tabela de Tarefas para ajuste de colunas */
     #tasks th:nth-child(n+2):nth-child(-n+8),
@@ -331,6 +332,13 @@
     function renderTasks() {
       const tbody = document.getElementById("tasks-table-body");
       tbody.innerHTML = "";
+      // estado vazio
+      if (!Array.isArray(tasks) || tasks.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="10" class="empty-row">Nenhuma tarefa cadastrada ainda.</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
       tasks.forEach((task, taskIndex) => {
         const tr = document.createElement("tr");
         tr.dataset.index = taskIndex;
@@ -352,6 +360,13 @@
     function renderRewards() {
       const tbody = document.getElementById("rewards-table-body");
       tbody.innerHTML = "";
+      // estado vazio
+      if (!Array.isArray(rewards) || rewards.length === 0) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="4" class="empty-row">Nenhuma recompensa cadastrada ainda.</td>`;
+        tbody.appendChild(tr);
+        return;
+      }
       rewards.forEach((reward, rewardIndex) => {
         if (reward.quantity === undefined) reward.quantity = 0;
         const tr = document.createElement("tr");
