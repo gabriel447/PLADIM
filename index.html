@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planejador de Tarefas</title>
+  <title>PLADIM</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -414,31 +414,30 @@
       const style = document.createElement('style');
       style.id = 'confirm-modal-styles';
       style.textContent = `
-        .cm-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000}
-        .cm-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(2px)}
-        .cm-dialog{position:relative;background:#fff;color:#0f172a;border-radius:14px;box-shadow:0 20px 50px rgba(2,6,23,.2);width:min(92vw,440px);padding:20px 20px 16px;border:1px solid rgba(2,6,23,.08);z-index:1}
-        .cm-title{margin:0 0 8px;font-size:1.2rem;font-weight:700}
-        .cm-message{margin:0 0 18px;color:#334155;line-height:1.5}
-        .cm-actions{display:flex;justify-content:flex-end;gap:8px}
-        .cm-btn{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;color:#0f172a;cursor:pointer;transition:.15s ease}
-        .cm-btn:hover{background:#f1f5f9}
-        .cm-btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .cm-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000;opacity:0;animation:cm-fade-in .18s ease forwards}
+        .cm-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.50);backdrop-filter:blur(3px)}
+        .cm-dialog{position:relative;background:#fff;color:#0f172a;border-radius:12px;box-shadow:0 24px 60px rgba(2,6,23,.22);width:min(92vw,420px);padding:22px 24px;border:1px solid rgba(2,6,23,.08);z-index:1;transform:translateY(6px) scale(0.98);animation:cm-pop .18s ease forwards}
+        .cm-title{margin:0 0 14px;font-size:1.25rem;font-weight:700;letter-spacing:.2px}
+        .cm-actions{display:flex;align-items:center;justify-content:flex-start;gap:16px;margin-top:4px}
+        .cm-btn{padding:10px 16px;border-radius:10px;border:none;background:#f8fafc;color:#0f172a;cursor:pointer;transition:.15s ease;font-weight:600}
+        .cm-btn:hover{background:#eef2f7}
+        .cm-btn:focus{outline:none}
+        .cm-btn:focus-visible{outline:2px solid rgba(59,130,246,.45);outline-offset:2px}
+        .cm-btn-primary{background:var(--primary);color:#fff}
         .cm-btn-primary:hover{background:var(--primary-hover)}
-        .cm-btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+        .cm-btn-danger{background:var(--danger);color:#fff}
         .cm-btn-danger:hover{background:var(--danger-hover)}
+        @keyframes cm-fade-in{to{opacity:1}}
+        @keyframes cm-pop{to{transform:translateY(0) scale(1)}}
       `;
       document.head.appendChild(style);
     }
 
-    function showConfirmModal({ title = 'Confirmação', message = '', confirmText = 'Confirmar', cancelText = 'Cancelar', variant = 'primary' } = {}) {
+    function showConfirmModal({ title = 'Confirmação', confirmText = 'Confirmar', cancelText = 'Cancelar', variant = 'primary' } = {}) {
       return new Promise((resolve) => {
         ensureModalStyles();
 
         const okClass = variant === 'danger' ? 'cm-btn cm-btn-danger' : 'cm-btn cm-btn-primary';
-        // Garantir uma mensagem padrão útil mesmo quando "message" vier vazio em produção
-        const safeMessage = (typeof message === 'string' && message.trim().length > 0)
-          ? message
-          : 'Tem certeza que deseja continuar?';
 
         const overlay = document.createElement('div');
         overlay.className = 'cm-overlay';
@@ -446,7 +445,6 @@
           <div class="cm-backdrop" aria-hidden="true"></div>
           <div class="cm-dialog" role="dialog" aria-modal="true" aria-labelledby="cm-title">
             <h3 class="cm-title" id="cm-title">${title}</h3>
-            <p class="cm-message">${safeMessage}</p>
             <div class="cm-actions">
               <button type="button" class="cm-btn" id="cm-cancel">${cancelText}</button>
               <button type="button" class="${okClass}" id="cm-ok">${confirmText}</button>
@@ -492,8 +490,7 @@
             const taskIndex = parseInt(tr.dataset.index, 10);
             const taskName = tasks[taskIndex].name;
             const proceed = await showConfirmModal({
-              title: 'Excluir tarefa',
-              message: `Tem certeza que deseja excluir a tarefa "${taskName}"? Essa ação não poderá ser desfeita.`,
+              title: 'Deseja mesmo Excluir?',
               confirmText: 'Excluir',
               cancelText: 'Cancelar',
               variant: 'danger'
@@ -529,8 +526,7 @@
       } else if (target.closest('.delete-reward')) {
           const rewardName = rewards[rewardIndex].name;
           const proceed = await showConfirmModal({
-            title: 'Excluir recompensa',
-            message: `Tem certeza que deseja excluir a recompensa "${rewardName}"? Essa ação não poderá ser desfeita.`,
+            title: 'Deseja mesmo Excluir?',
             confirmText: 'Excluir',
             cancelText: 'Cancelar',
             variant: 'danger'
@@ -586,8 +582,7 @@
 
     document.getElementById("reset-button").addEventListener("click", async () => {
       const proceed = await showConfirmModal({
-        title: 'Fechar semana',
-        message: 'Ao fechar a semana, salvamos os pontos da semana como saldo anterior e zeramos as marcações de tarefas e resgates. Deseja continuar?',
+        title: 'Deseja mesmo fechar a semana ?',
         confirmText: 'Fechar',
         cancelText: 'Cancelar',
         variant: 'primary'
