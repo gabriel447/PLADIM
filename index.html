@@ -435,6 +435,10 @@
         ensureModalStyles();
 
         const okClass = variant === 'danger' ? 'cm-btn cm-btn-danger' : 'cm-btn cm-btn-primary';
+        // Garantir uma mensagem padrão útil mesmo quando "message" vier vazio em produção
+        const safeMessage = (typeof message === 'string' && message.trim().length > 0)
+          ? message
+          : 'Tem certeza que deseja continuar?';
 
         const overlay = document.createElement('div');
         overlay.className = 'cm-overlay';
@@ -442,7 +446,7 @@
           <div class="cm-backdrop" aria-hidden="true"></div>
           <div class="cm-dialog" role="dialog" aria-modal="true" aria-labelledby="cm-title">
             <h3 class="cm-title" id="cm-title">${title}</h3>
-            <p class="cm-message">${message}</p>
+            <p class="cm-message">${safeMessage}</p>
             <div class="cm-actions">
               <button type="button" class="cm-btn" id="cm-cancel">${cancelText}</button>
               <button type="button" class="${okClass}" id="cm-ok">${confirmText}</button>
@@ -583,8 +587,8 @@
     document.getElementById("reset-button").addEventListener("click", async () => {
       const proceed = await showConfirmModal({
         title: 'Fechar semana',
-        message: 'Tem certeza que deseja fechar a semana? Esta ação irá zerar suas tarefas e recompensas resgatadas, salvando o saldo final como o novo saldo inicial.',
-        confirmText: 'Fechar semana',
+        message: 'Ao fechar a semana, salvamos os pontos da semana como saldo anterior e zeramos as marcações de tarefas e resgates. Deseja continuar?',
+        confirmText: 'Fechar',
         cancelText: 'Cancelar',
         variant: 'primary'
       });
