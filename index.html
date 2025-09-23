@@ -408,6 +408,70 @@
       saveState();
     }
     
+    // --- Modal de Confirmação (custom) ---
+    function ensureModalStyles() {
+      if (document.getElementById('confirm-modal-styles')) return;
+      const style = document.createElement('style');
+      style.id = 'confirm-modal-styles';
+      style.textContent = `
+        .cm-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:1000}
+        .cm-backdrop{position:absolute;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(2px)}
+        .cm-dialog{position:relative;background:#fff;color:#0f172a;border-radius:14px;box-shadow:0 20px 50px rgba(2,6,23,.2);width:min(92vw,440px);padding:20px 20px 16px;border:1px solid rgba(2,6,23,.08);z-index:1}
+        .cm-title{margin:0 0 8px;font-size:1.2rem;font-weight:700}
+        .cm-message{margin:0 0 18px;color:#334155;line-height:1.5}
+        .cm-actions{display:flex;justify-content:flex-end;gap:8px}
+        .cm-btn{padding:10px 14px;border-radius:10px;border:1px solid var(--border);background:#fff;color:#0f172a;cursor:pointer;transition:.15s ease}
+        .cm-btn:hover{background:#f1f5f9}
+        .cm-btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .cm-btn-primary:hover{background:var(--primary-hover)}
+        .cm-btn-danger{background:var(--danger);border-color:var(--danger);color:#fff}
+        .cm-btn-danger:hover{background:var(--danger-hover)}
+      `;
+      document.head.appendChild(style);
+    }
+
+    function showConfirmModal({ title = 'Confirmação', message = '', confirmText = 'Confirmar', cancelText = 'Cancelar', variant = 'primary' } = {}) {
+      return new Promise((resolve) => {
+        ensureModalStyles();
+
+        const okClass = variant === 'danger' ? 'cm-btn cm-btn-danger' : 'cm-btn cm-btn-primary';
+
+        const overlay = document.createElement('div');
+        overlay.className = 'cm-overlay';
+        overlay.innerHTML = `
+          <div class="cm-backdrop" aria-hidden="true"></div>
+          <div class="cm-dialog" role="dialog" aria-modal="true" aria-labelledby="cm-title">
+            <h3 class="cm-title" id="cm-title">${title}</h3>
+            <p class="cm-message">${message}</p>
+            <div class="cm-actions">
+              <button type="button" class="cm-btn" id="cm-cancel">${cancelText}</button>
+              <button type="button" class="${okClass}" id="cm-ok">${confirmText}</button>
+            </div>
+          </div>
+        `;
+
+        const remove = (result) => {
+          document.removeEventListener('keydown', onKey);
+          overlay.remove();
+          resolve(result);
+        };
+
+        const onKey = (e) => {
+          if (e.key === 'Escape') remove(false);
+          if (e.key === 'Enter') remove(true);
+        };
+
+        overlay.querySelector('.cm-backdrop').addEventListener('click', () => remove(false));
+        overlay.querySelector('#cm-cancel').addEventListener('click', () => remove(false));
+        overlay.querySelector('#cm-ok').addEventListener('click', () => remove(true));
+
+        document.addEventListener('keydown', onKey);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => overlay.querySelector('#cm-ok')?.focus());
+      });
+    }
+
     // --- Event Listeners ---
     document.getElementById("tasks-table-body").addEventListener('change', (e) => {
         if(e.target.classList.contains('task-checkbox')) {
@@ -416,55 +480,68 @@
         }
     });
 
-    document.getElementById("tasks-table-body").addEventListener('click', (e) => {
+    // alterar listener para usar modal de confirmação ao deletar tarefa
+    document.getElementById("tasks-table-body").addEventListener('click', async (e) => {
         const deleteButton = e.target.closest('.delete-task');
         if (deleteButton) {
             const tr = deleteButton.closest('tr');
             const taskIndex = parseInt(tr.dataset.index, 10);
             const taskName = tasks[taskIndex].name;
-            if (confirm(`Tem certeza que deseja excluir a tarefa "${taskName}"?`)) {
-              tasks.splice(taskIndex, 1);
-              // Opcional: Limpar checks associados a tarefas deletadas
-              Object.keys(taskChecks).forEach(key => {
-                  if (key.startsWith(`task-${taskIndex}-`)) {
-                      delete taskChecks[key];
-                  }
-              });
-              renderTasks();
-              updateScores();
-              saveTasks();
-            }
+            const proceed = await showConfirmModal({
+              title: 'Excluir tarefa',
+              message: `Tem certeza que deseja excluir a tarefa "${taskName}"? Essa ação não poderá ser desfeita.`,
+              confirmText: 'Excluir',
+              cancelText: 'Cancelar',
+              variant: 'danger'
+            });
+            if (!proceed) return;
+            tasks.splice(taskIndex, 1);
+            Object.keys(taskChecks).forEach(key => {
+                if (key.startsWith(`task-${taskIndex}-`)) {
+                    delete taskChecks[key];
+                }
+            });
+            renderTasks();
+            updateScores();
+            saveTasks();
         }
     });
 
-    document.getElementById("rewards-table-body").addEventListener('click', (e) => {
-        const target = e.target;
-        const tr = target.closest('tr');
-        if (!tr) return;
-        
-        const rewardIndex = parseInt(tr.dataset.index, 10);
-        const reward = rewards[rewardIndex];
+    // Listener para a tabela de recompensas (confirm modal ao excluir)
+    document.getElementById("rewards-table-body").addEventListener('click', async (e) => {
+      const target = e.target;
+      const tr = target.closest('tr');
+      if (!tr) return;
+      
+      const rewardIndex = parseInt(tr.dataset.index, 10);
+      const reward = rewards[rewardIndex];
 
-        if (target.closest('.btn-plus')) {
-            reward.quantity = (reward.quantity || 0) + 1;
-        } else if (target.closest('.btn-minus')) {
-            if (reward.quantity > 0) {
-                reward.quantity--;
-            }
-        } else if (target.closest('.delete-reward')) {
-            const rewardName = rewards[rewardIndex].name;
-            if (confirm(`Tem certeza que deseja excluir a recompensa "${rewardName}"?`)) {
-                rewards.splice(rewardIndex, 1);
-                renderRewards();
-                updateScores();
-                saveRewards();
-            }
-            return;
-        }
-        
-        renderRewards();
-        updateScores();
-        saveRewards();
+      if (target.closest('.btn-plus')) {
+          reward.quantity = (reward.quantity || 0) + 1;
+      } else if (target.closest('.btn-minus')) {
+          if (reward.quantity > 0) {
+              reward.quantity--;
+          }
+      } else if (target.closest('.delete-reward')) {
+          const rewardName = rewards[rewardIndex].name;
+          const proceed = await showConfirmModal({
+            title: 'Excluir recompensa',
+            message: `Tem certeza que deseja excluir a recompensa "${rewardName}"? Essa ação não poderá ser desfeita.`,
+            confirmText: 'Excluir',
+            cancelText: 'Cancelar',
+            variant: 'danger'
+          });
+          if (!proceed) return;
+          rewards.splice(rewardIndex, 1);
+          renderRewards();
+          updateScores();
+          saveRewards();
+          return;
+      }
+      
+      renderRewards();
+      updateScores();
+      saveRewards();
     });
     
     document.getElementById("add-task-form").addEventListener('submit', (e) => {
@@ -503,10 +580,15 @@
         }
     });
 
-    document.getElementById("reset-button").addEventListener("click", () => {
-      if (!confirm("Tem certeza que deseja fechar a semana? Esta ação irá zerar suas tarefas e recompensas resgatadas, salvando o saldo final como o novo saldo inicial.")) {
-        return;
-      }
+    document.getElementById("reset-button").addEventListener("click", async () => {
+      const proceed = await showConfirmModal({
+        title: 'Fechar semana',
+        message: 'Tem certeza que deseja fechar a semana? Esta ação irá zerar suas tarefas e recompensas resgatadas, salvando o saldo final como o novo saldo inicial.',
+        confirmText: 'Fechar semana',
+        cancelText: 'Cancelar',
+        variant: 'primary'
+      });
+      if (!proceed) return;
       saldoAnterior = saldoAnterior + calculateWeeklyPoints() - calculateRewardsCost();
       taskChecks = {};
       rewards.forEach(r => r.quantity = 0);
